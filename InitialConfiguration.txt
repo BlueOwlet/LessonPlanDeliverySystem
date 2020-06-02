@@ -1,0 +1,5 @@
+{
+    "run": "False",
+    "googleFolder": "C:\\Users\\KamiO\\Google Drive\\Atom Projects\\Lesson Plan Sharing",
+    "materialFolder": "C:\\Users\\KamiO\\Google Drive\\Atom Projects\\Lesson Plan Sharing"
+}

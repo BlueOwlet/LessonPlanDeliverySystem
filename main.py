@@ -10,6 +10,7 @@ import shutil
 from os.path import expanduser
 import tkinter as tk
 from tkinter import filedialog
+import json
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = [
 
@@ -24,8 +25,14 @@ home = os.path.realpath(expanduser("~"))
 # materialFolder=os.path.realpath(filedialog.askdirectory())
 # googleFolder = os.path.realpath(filedialog.askdirectory())
 
-materialFolder=os.path.realpath('C:\\Users\\KamiO\\Desktop\\IA\\Material\\PDFs')
-googleFolder = os.path.realpath('C:\\Users\\KamiO\\Google Drive (interactemails@gmail.com)\\Classes')
+
+
+# materialFolder=os.path.realpath('C:\\Users\\KamiO\\Desktop\\IA\\Material\\PDFs')
+# googleFolder = os.path.realpath('C:\\Users\\KamiO\\Google Drive (interactemails@gmail.com)\\Classes')
+
+
+
+
 
 def login():
 
@@ -58,80 +65,6 @@ def login():
             pickle.dump(creds, token)
     global service
     service = build('sheets', 'v4', credentials=creds)
-
-def GettingData():
-    # Call the Sheets API
-    spreadsheet_id = '1gEsoxidCDUByobm0RU7nThlY_-EODVOTc2A6vT-8Sz8'
-    sheet = service.spreadsheets()
-
-    global teacher_data
-    range='A:A'
-    result = sheet.values().get(spreadsheetId=spreadsheet_id,range=range).execute()
-    teachers = result.get('values', [])
-
-    global group_data
-    range='B:B'
-    result = sheet.values().get(spreadsheetId=spreadsheet_id,range=range).execute()
-    groups = result.get('values', [])
-
-    global material_data
-    range='C:C'
-    result = sheet.values().get(spreadsheetId=spreadsheet_id,range=range).execute()
-    material = result.get('values', [])
-
-
-    material_data=[]
-    for mat in material:
-        if mat:
-            material_data.append(mat[0])
-
-    group_data=[]
-    for group in groups:
-        if group:
-            group_data.append(group[0])
-
-    teacher_data=[]
-    for teacher in teachers:
-        if teacher:
-            teacher_data.append(teacher[0])
-
-def UpdateLPs():
-    files = glob.glob(os.path.realpath('Material/PDFs/*/*.pdf'))
-    print('Files loaded')
-    for group in group_data:
-        print('')
-        if 'IAG' in group:
-
-            teacher = teacher_data[group_data.index(group)]
-
-            material = material_data[group_data.index(group)]
-            print('{} Found in GSheets'.format(group))
-            print('Searching for Group Folder')
-            teacher_folder = glob.glob(os.path.realpath(home+'/Google Drive (interactemails@gmail.com)/Classes/'+teacher))
-            print(teacher_folder)
-            if teacher_folder==[]:
-                print('Teacher Folder not found')
-                print('Creating Teacher AND Group Folders')
-                os.mkdir(home+'/Google Drive (interactemails@gmail.com)/Classes/'+teacher)
-                os.mkdir(os.path.realpath(home+'/Google Drive (interactemails@gmail.com)/Classes/'+teacher+'/'+group))
-                print('Teacher AND Group Folders created Successfully')
-            else:
-                print('Teacher Folder Found at {}'.format(teacher_folder))
-            group_folder = glob.glob(home+'/Google Drive (interactemails@gmail.com)/Classes/'+teacher+'/'+group+'*')
-            if group_folder == []:
-                print('Group Folder not Found')
-                os.mkdir(home+'/Google Drive (interactemails@gmail.com)/Classes/'+teacher+'/'+group)
-                print('Group Folder Created Successfully')
-            else:
-                print('Group Folder found at {}'.format(group_folder))
-
-            material_file = glob.glob(home+'/Desktop/IA/Material/PDFs/*/'+material)
-            if material_file==[]:
-                print('Material File(s) not Found')
-            else:
-                print('Material Found at {}'.format(material_file))
-                shutil.copy(os.path.abspath(material_file[0]),os.path.abspath(home+'/Google Drive (interactemails@gmail.com)/Classes/'+teacher+'/'+group+'/'))
-                print('Successfully PERFORMED')
 
 class Group:
     def __init__(self,group_data):
@@ -171,7 +104,7 @@ class Group:
         print(self.materialFile, self.groupFolder)
         shutil.copy(self.materialFile,self.groupFolder)
 
-def testing():
+def UpdateLPs():
     # Call the Sheets API
     spreadsheet_id = '1gEsoxidCDUByobm0RU7nThlY_-EODVOTc2A6vT-8Sz8'
     sheet = service.spreadsheets()
@@ -201,14 +134,57 @@ def testing():
             except Exception as e:
                 print('Error: {}'.format(e))
 
+def setup():
+    global materialFolder
+    global googleFolder
+
+    with open('InitialConfiguration.txt','r+') as file:
+
+        firstRunData = json.load(file)
+
+        run = firstRunData['run']
+
+        if run == 'True':
+            print('Choose Material Folder:')
+            materialFolder=os.path.realpath(filedialog.askdirectory())
+            print('Choose Google Folder/Classes')
+            googleFolder = os.path.realpath(filedialog.askdirectory())
+            
+            firstRunData['run']="False"
+            firstRunData['materialFolder']=materialFolder
+            firstRunData['googleFolder']=googleFolder
+            # data={
+            #         "run" : "False",
+            #         "googleFolder" : str(googleFolder),
+            #         "materialFolder" : str(materialFolder)
+            #     }
+            file.close()
+            with open('InitialConfiguration.txt','w') as file:
+                json.dump(firstRunData,file, indent=4)
+
+            # file.write()
+
+        else:
+            googleFolder = firstRunData['googleFolder']
+            materialFolder = firstRunData['materialFolder']
+
+
+
+    # materialFolder=os.path.realpath('C:\\Users\\KamiO\\Desktop\\IA\\Material\\PDFs')
+    # googleFolder = os.path.realpath('C:\\Users\\KamiO\\Google Drive (interactemails@gmail.com)\\Classes')
+
+
+
+    # with open('InitialConfiguration.txt','w+') as file:
+    #     json.dump(data,file)
+    # return
 
 def main():
     login()
-
+    setup()
     print('Material Folder set to: {}'.format(materialFolder))
     print('Google Folder set to: {}'.format(googleFolder))
-    testing()
-    # GettingData()
+
     # UpdateLPs()
 
 
