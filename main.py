@@ -21,18 +21,6 @@ SCOPES = [
         'https://www.googleapis.com/auth/drive'
 
         ]
-home = os.path.realpath(expanduser("~"))
-# materialFolder=os.path.realpath(filedialog.askdirectory())
-# googleFolder = os.path.realpath(filedialog.askdirectory())
-
-
-
-# materialFolder=os.path.realpath('C:\\Users\\KamiO\\Desktop\\IA\\Material\\PDFs')
-# googleFolder = os.path.realpath('C:\\Users\\KamiO\\Google Drive (interactemails@gmail.com)\\Classes')
-
-
-
-
 
 def login():
 
@@ -149,15 +137,12 @@ def setup():
             materialFolder=os.path.realpath(filedialog.askdirectory())
             print('Choose Google Folder/Classes')
             googleFolder = os.path.realpath(filedialog.askdirectory())
-            
+
+
             firstRunData['run']="False"
             firstRunData['materialFolder']=materialFolder
             firstRunData['googleFolder']=googleFolder
-            # data={
-            #         "run" : "False",
-            #         "googleFolder" : str(googleFolder),
-            #         "materialFolder" : str(materialFolder)
-            #     }
+
             file.close()
             with open('InitialConfiguration.txt','w') as file:
                 json.dump(firstRunData,file, indent=4)
@@ -169,23 +154,13 @@ def setup():
             materialFolder = firstRunData['materialFolder']
 
 
-
-    # materialFolder=os.path.realpath('C:\\Users\\KamiO\\Desktop\\IA\\Material\\PDFs')
-    # googleFolder = os.path.realpath('C:\\Users\\KamiO\\Google Drive (interactemails@gmail.com)\\Classes')
-
-
-
-    # with open('InitialConfiguration.txt','w+') as file:
-    #     json.dump(data,file)
-    # return
-
 def main():
     login()
     setup()
     print('Material Folder set to: {}'.format(materialFolder))
     print('Google Folder set to: {}'.format(googleFolder))
 
-    # UpdateLPs()
+    UpdateLPs()
 
 
 main()
