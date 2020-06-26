@@ -1,5 +1,5 @@
 {
-	"run" : "True",
-	"googleFolder" : "googleFolder",
-	"materialFolder" : "materialFolder"
+    "run": "False",
+    "googleFolder": "C:\\Users\\KamiO\\Documents\\GitHub\\Google Sheet Python",
+    "materialFolder": "C:\\Users\\KamiO\\Google Drive\\Atom Projects\\Lesson Plan Sharing\\Material\\PDFs"
 }
